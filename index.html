@@ -254,6 +254,7 @@
             <th data-sort="accel">Accel <span class="sort-arrow"></span></th>
             <th>Grades</th>
             <th>Co-ed</th>
+            <th>Reviews</th>
             <th>Website</th>
           </tr>
         </thead>
@@ -883,6 +884,13 @@ function getFiltered() {
   return filtered;
 }
 
+function reviewSentimentColor(sentiment) {
+  if (sentiment.includes('Strongly Positive')) return 'var(--green)';
+  if (sentiment.includes('Positive')) return 'var(--green)';
+  if (sentiment.includes('Negative')) return 'var(--red)';
+  return 'var(--yellow)';
+}
+
 function dots(n, max, color) {
   return Array.from({length: max}, (_, i) =>
     `<div class="dot ${i < n ? 'filled ' + color : ''}"></div>`
@@ -921,7 +929,7 @@ function renderCards() {
         ${!s.coed ? `<span class="badge badge-girls">Girls Only</span>` : ''}
         ${s.type === 'Public Charter' ? `<span class="badge" style="background:rgba(96,165,250,0.15);color:var(--blue)">Public Charter</span>` : s.type === 'Public' ? `<span class="badge" style="background:rgba(96,165,250,0.15);color:var(--blue)">Public</span>` : ''}
       </div>
-      ${reviews[s.name] ? `<div style="font-size:0.8rem;margin-bottom:8px"><span style="color:${reviews[s.name].sentiment.includes('Strongly Positive')?'var(--green)':reviews[s.name].sentiment.includes('Positive')?'var(--green)':reviews[s.name].sentiment.includes('Negative')?'var(--red)':'var(--yellow)'};font-weight:600">Reviews: ${reviews[s.name].sentiment}</span> <span style="color:var(--text2)">(${reviews[s.name].rating})</span></div>` : ''}
+      ${reviews[s.name] ? `<div style="font-size:0.8rem;margin-bottom:8px"><span style="color:${reviewSentimentColor(reviews[s.name].sentiment)};font-weight:600">Reviews: ${reviews[s.name].sentiment}</span> <span style="color:var(--text2)">(${reviews[s.name].rating})</span></div>` : ''}
       <div class="card-summary">${s.bestFor}</div>
       <div class="card-actions" onclick="event.stopPropagation()">
         <button class="btn-sm" onclick="openModal('${s.name}')">Details</button>
@@ -949,6 +957,7 @@ function renderTable() {
       <td><div class="strength-dots">${dots(s.accel, 5, 'green')}</div></td>
       <td>${s.grades}</td>
       <td>${s.coed ? 'Yes' : 'Girls'}</td>
+      <td>${reviews[s.name] ? `<span style="color:${reviewSentimentColor(reviews[s.name].sentiment)};font-size:0.8rem;font-weight:500">${reviews[s.name].sentiment}</span>` : '<span style="color:var(--text2);font-size:0.8rem">—</span>'}</td>
       <td><a href="${s.url}" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none">Visit</a></td>
     </tr>
   `).join('');
@@ -974,6 +983,7 @@ function renderCompare() {
     { label: 'Pros', fn: s => `<ul style="padding-left:14px;margin:0">${s.pros.map(p=>`<li class="pro" style="font-size:0.82rem;margin-bottom:3px">${p}</li>`).join('')}</ul>` },
     { label: 'Cons', fn: s => `<ul style="padding-left:14px;margin:0">${s.cons.map(c=>`<li class="con" style="font-size:0.82rem;margin-bottom:3px">${c}</li>`).join('')}</ul>` },
     { label: 'Neighborhood', fn: s => `<strong>${s.neighborhood}</strong><br><span style="font-size:0.82rem;color:var(--text2)">${s.neighborhoodNote}</span>` },
+    { label: 'Parent Reviews', fn: s => { const r = reviews[s.name]; if (!r) return '<span style="color:var(--text2)">No reviews yet</span>'; return `<span style="color:${reviewSentimentColor(r.sentiment)};font-weight:600">${r.sentiment}</span><br><span style="font-size:0.82rem;color:var(--text2)">${r.rating}</span><div style="margin-top:6px;font-size:0.82rem;color:var(--text2)">${r.takeaway}</div>`; }},
     { label: 'Website', fn: s => `<a href="${s.url}" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none">${s.url.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'')}</a>` }
   ];
 
@@ -1037,7 +1047,7 @@ function openModal(name) {
 function renderModalReview(name) {
   const r = reviews[name];
   if (!r) return '';
-  const sentimentColor = r.sentiment.includes('Strongly Positive') ? 'var(--green)' : r.sentiment.includes('Positive') ? 'var(--green)' : r.sentiment.includes('Negative') ? 'var(--red)' : 'var(--yellow)';
+  const sentimentColor = reviewSentimentColor(r.sentiment);
   return `
     <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
       <h4 style="font-size:1.1rem;margin-bottom:4px">Parent Reviews</h4>
