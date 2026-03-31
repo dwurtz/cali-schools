@@ -254,6 +254,7 @@
             <th data-sort="accel">Accel <span class="sort-arrow"></span></th>
             <th>Grades</th>
             <th>Co-ed</th>
+            <th>Website</th>
           </tr>
         </thead>
         <tbody id="table-body"></tbody>
@@ -768,6 +769,7 @@ function renderCards() {
       <div class="card-summary">${s.bestFor}</div>
       <div class="card-actions" onclick="event.stopPropagation()">
         <button class="btn-sm" onclick="openModal('${s.name}')">Details</button>
+        <a class="btn-sm" href="${s.url}" target="_blank" rel="noopener" style="text-decoration:none">Website</a>
         <button class="btn-sm compare-btn ${compareSet.has(s.name)?'active':''}" onclick="toggleCompare('${s.name}')">
           ${compareSet.has(s.name) ? 'In Compare' : '+ Compare'}
         </button>
@@ -791,6 +793,7 @@ function renderTable() {
       <td><div class="strength-dots">${dots(s.accel, 5, 'green')}</div></td>
       <td>${s.grades}</td>
       <td>${s.coed ? 'Yes' : 'Girls'}</td>
+      <td><a href="${s.url}" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none">Visit</a></td>
     </tr>
   `).join('');
 }
@@ -814,7 +817,8 @@ function renderCompare() {
     { label: 'Accelerated', fn: s => `${scoreBar(s.accel,5,'green')}<div style="margin-top:4px;font-size:0.82rem;color:var(--text2)">${s.accelNote}</div>` },
     { label: 'Pros', fn: s => `<ul style="padding-left:14px;margin:0">${s.pros.map(p=>`<li class="pro" style="font-size:0.82rem;margin-bottom:3px">${p}</li>`).join('')}</ul>` },
     { label: 'Cons', fn: s => `<ul style="padding-left:14px;margin:0">${s.cons.map(c=>`<li class="con" style="font-size:0.82rem;margin-bottom:3px">${c}</li>`).join('')}</ul>` },
-    { label: 'Neighborhood', fn: s => `<strong>${s.neighborhood}</strong><br><span style="font-size:0.82rem;color:var(--text2)">${s.neighborhoodNote}</span>` }
+    { label: 'Neighborhood', fn: s => `<strong>${s.neighborhood}</strong><br><span style="font-size:0.82rem;color:var(--text2)">${s.neighborhoodNote}</span>` },
+    { label: 'Website', fn: s => `<a href="${s.url}" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none">${s.url.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'')}</a>` }
   ];
 
   // Find best tuition
