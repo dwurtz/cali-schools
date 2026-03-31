@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bay Area School Research</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232733;
+    --border: #2e3340;
+    --text: #e4e6eb;
+    --text2: #9ca3af;
+    --accent: #6366f1;
+    --accent2: #818cf8;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --orange: #fb923c;
+    --blue: #60a5fa;
+    --pink: #f472b6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+
+  .app { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+  header { text-align: center; padding: 30px 0 20px; }
+  header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+  header p { color: var(--text2); font-size: 0.95rem; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; justify-content: center; margin: 20px 0; background: var(--surface); border-radius: 12px; padding: 4px; width: fit-content; margin-left: auto; margin-right: auto; }
+  .tab { padding: 8px 20px; border-radius: 10px; border: none; background: none; color: var(--text2); cursor: pointer; font-size: 0.9rem; font-weight: 500; transition: all 0.2s; }
+  .tab.active { background: var(--accent); color: white; }
+  .tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; align-items: center; padding: 16px; background: var(--surface); border-radius: 12px; }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-group label { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .filter-group select, .filter-group input { background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 6px 10px; border-radius: 8px; font-size: 0.85rem; outline: none; }
+  .filter-group select:focus, .filter-group input:focus { border-color: var(--accent); }
+  .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .pill { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: none; color: var(--text2); cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+  .pill.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .pill:hover:not(.active) { border-color: var(--text2); color: var(--text); }
+  .reset-btn { background: none; border: none; color: var(--accent2); cursor: pointer; font-size: 0.8rem; margin-left: auto; }
+  .reset-btn:hover { text-decoration: underline; }
+
+  /* Cards View */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 16px; }
+  .school-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; cursor: pointer; transition: all 0.2s; position: relative; }
+  .school-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .school-card.top-pick { border-color: var(--yellow); }
+  .school-card.top-pick::before { content: 'Top Pick'; position: absolute; top: -10px; right: 16px; background: var(--yellow); color: #000; font-size: 0.7rem; font-weight: 700; padding: 2px 10px; border-radius: 10px; }
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .card-header h3 { font-size: 1.1rem; font-weight: 600; }
+  .card-rank { font-size: 0.75rem; color: var(--text2); background: var(--surface2); padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+  .card-meta { display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .meta-item { font-size: 0.8rem; color: var(--text2); display: flex; align-items: center; gap: 4px; }
+  .meta-item strong { color: var(--text); }
+  .card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .badge { font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; font-weight: 500; }
+  .badge-spanish { background: rgba(251,191,36,0.15); color: var(--yellow); }
+  .badge-spanish.weak { background: rgba(251,191,36,0.08); color: #b89a30; }
+  .badge-stem { background: rgba(99,102,241,0.15); color: var(--accent2); }
+  .badge-accel { background: rgba(52,211,153,0.15); color: var(--green); }
+  .badge-free { background: rgba(52,211,153,0.2); color: var(--green); font-weight: 700; }
+  .badge-girls { background: rgba(244,114,182,0.15); color: var(--pink); }
+  .card-summary { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+  .card-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .btn-sm { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: none; color: var(--text2); cursor: pointer; font-size: 0.8rem; transition: all 0.15s; }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent2); }
+  .btn-sm.compare-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+  /* Table View */
+  .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { background: var(--surface2); padding: 10px 14px; text-align: left; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); cursor: pointer; white-space: nowrap; user-select: none; position: sticky; top: 0; }
+  th:hover { color: var(--text); }
+  th .sort-arrow { margin-left: 4px; font-size: 0.7rem; }
+  td { padding: 10px 14px; border-top: 1px solid var(--border); background: var(--surface); white-space: nowrap; }
+  tr:hover td { background: var(--surface2); }
+  td.school-name { font-weight: 600; white-space: normal; min-width: 160px; cursor: pointer; }
+  td.school-name:hover { color: var(--accent2); }
+  .strength-dots { display: flex; gap: 2px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+  .dot.filled { background: var(--accent); }
+  .dot.filled.green { background: var(--green); }
+  .dot.filled.yellow { background: var(--yellow); }
+
+  /* Compare View */
+  .compare-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 12px; z-index: 100; transform: translateY(100%); transition: transform 0.3s; }
+  .compare-bar.visible { transform: translateY(0); }
+  .compare-chips { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
+  .compare-chip { background: var(--surface2); padding: 4px 12px; border-radius: 20px; font-size: 0.82rem; display: flex; align-items: center; gap: 6px; }
+  .compare-chip button { background: none; border: none; color: var(--red); cursor: pointer; font-size: 1rem; line-height: 1; }
+  .compare-go { background: var(--accent); color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+  .compare-go:hover { background: var(--accent2); }
+
+  /* Detail Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; display: none; justify-content: center; align-items: flex-start; padding: 40px 20px; overflow-y: auto; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border-radius: 16px; max-width: 720px; width: 100%; padding: 30px; position: relative; }
+  .modal-close { position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--text2); font-size: 1.5rem; cursor: pointer; }
+  .modal-close:hover { color: var(--text); }
+  .modal h2 { font-size: 1.5rem; margin-bottom: 4px; }
+  .modal-subtitle { color: var(--text2); font-size: 0.9rem; margin-bottom: 20px; }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .modal-stat { background: var(--surface2); padding: 14px; border-radius: 10px; }
+  .modal-stat label { font-size: 0.72rem; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
+  .modal-stat span { font-size: 1.05rem; font-weight: 600; }
+  .modal-section { margin-bottom: 18px; }
+  .modal-section h4 { font-size: 0.85rem; color: var(--accent2); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .modal-section p, .modal-section li { font-size: 0.9rem; color: var(--text2); line-height: 1.7; }
+  .modal-section ul { padding-left: 18px; }
+  .modal-section li { margin-bottom: 4px; }
+  .pro { color: var(--green); }
+  .con { color: var(--red); }
+  .modal-link { display: inline-block; margin-top: 12px; color: var(--accent2); text-decoration: none; font-size: 0.9rem; }
+  .modal-link:hover { text-decoration: underline; }
+  .modal-neighborhood { background: var(--surface2); padding: 16px; border-radius: 10px; margin-top: 16px; }
+  .modal-neighborhood h4 { margin-bottom: 6px; color: var(--orange); }
+  .modal-neighborhood p { font-size: 0.88rem; color: var(--text2); }
+
+  /* Compare Page */
+  .compare-view { display: none; overflow-x: auto; }
+  .compare-view.active { display: block; }
+  .compare-table { width: 100%; border-collapse: collapse; }
+  .compare-table th { background: var(--surface2); padding: 12px 16px; text-align: left; font-size: 0.78rem; text-transform: uppercase; color: var(--text2); letter-spacing: 0.5px; min-width: 100px; position: sticky; left: 0; z-index: 2; }
+  .compare-table td { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--surface); min-width: 220px; vertical-align: top; font-size: 0.88rem; }
+  .compare-table tr:first-child td { font-weight: 700; font-size: 1rem; }
+  .best-value { background: rgba(52,211,153,0.1) !important; }
+
+  /* Scores */
+  .score-bar { display: flex; align-items: center; gap: 8px; }
+  .score-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; max-width: 80px; }
+  .score-fill { height: 100%; border-radius: 3px; }
+  .score-label { font-size: 0.8rem; color: var(--text2); min-width: 28px; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text2); }
+  .empty-state h3 { font-size: 1.2rem; margin-bottom: 8px; color: var(--text); }
+
+  .view-container { display: none; }
+  .view-container.active { display: block; }
+
+  @media (max-width: 768px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .filters { flex-direction: column; }
+    .modal-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Bay Area School Explorer</h1>
+    <p>34 schools researched from 2000 N Shoreline Blvd, Mountain View &mdash; 19 private, 13 public, 2 charter</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-view="cards">Cards</button>
+    <button class="tab" data-view="table">Table</button>
+    <button class="tab" data-view="compare">Compare</button>
+  </div>
+
+  <div class="filters">
+    <div class="filter-group">
+      <label>Max Distance</label>
+      <select id="f-distance">
+        <option value="99">Any</option>
+        <option value="5">Under 5 mi</option>
+        <option value="10">Under 10 mi</option>
+        <option value="15">Under 15 mi</option>
+        <option value="20">Under 20 mi</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Max Tuition</label>
+      <select id="f-tuition">
+        <option value="999999">Any</option>
+        <option value="0">Free only</option>
+        <option value="35000">Under $35k</option>
+        <option value="45000">Under $45k</option>
+        <option value="55000">Under $55k</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Spanish</label>
+      <select id="f-spanish">
+        <option value="any">Any</option>
+        <option value="strong">Strong program</option>
+        <option value="yes">Has Spanish</option>
+        <option value="no">No Spanish (show all)</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>STEM/Robotics</label>
+      <select id="f-stem">
+        <option value="0">Any</option>
+        <option value="4">Strong (4+)</option>
+        <option value="3">Moderate+ (3+)</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Grades</label>
+      <select id="f-grades">
+        <option value="any">Any</option>
+        <option value="k12">K/TK-12</option>
+        <option value="ms">Has Middle School</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Type</label>
+      <select id="f-type">
+        <option value="any">Any</option>
+        <option value="public">Public only</option>
+        <option value="private">Private only</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Sort By</label>
+      <select id="f-sort">
+        <option value="rank">Recommendation</option>
+        <option value="distance">Distance</option>
+        <option value="tuition">Tuition (low-high)</option>
+        <option value="spanish">Spanish strength</option>
+        <option value="stem">STEM strength</option>
+        <option value="name">Name A-Z</option>
+      </select>
+    </div>
+    <button class="reset-btn" onclick="resetFilters()">Reset filters</button>
+  </div>
+
+  <div id="view-cards" class="view-container active">
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+
+  <div id="view-table" class="view-container">
+    <div class="table-wrap">
+      <table id="school-table">
+        <thead>
+          <tr>
+            <th data-sort="name">School <span class="sort-arrow"></span></th>
+            <th>Type</th>
+            <th data-sort="distance">Dist <span class="sort-arrow"></span></th>
+            <th data-sort="drive">Drive <span class="sort-arrow"></span></th>
+            <th data-sort="tuition">Tuition <span class="sort-arrow"></span></th>
+            <th data-sort="spanish">Spanish <span class="sort-arrow"></span></th>
+            <th data-sort="stem">STEM <span class="sort-arrow"></span></th>
+            <th data-sort="accel">Accel <span class="sort-arrow"></span></th>
+            <th>Grades</th>
+            <th>Co-ed</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="view-compare" class="view-container">
+    <div class="compare-view active" id="compare-content"></div>
+  </div>
+</div>
+
+<div class="compare-bar" id="compare-bar">
+  <span style="font-size:0.85rem;color:var(--text2)">Compare:</span>
+  <div class="compare-chips" id="compare-chips"></div>
+  <button class="compare-go" onclick="showCompare()">Compare Now</button>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<script>
+const schools = [
+  {
+    name: "Khan Lab School", type: "Private", distance: 2, drive: "5 min", tuition: 37700, tuitionDisplay: "$37,700",
+    grades: "TK-12", coed: true, k12: true, topPick: true, rank: 1,
+    spanish: 5, spanishLabel: "Strong (I-V + Advanced)", spanishNote: "Spanish I through V plus Advanced Cultural Studies in Spanish",
+    stem: 5, stemLabel: "Strong", stemNote: "Robotics team, mastery-based learning, Physics/Engineering, CS, Architecture, Teaching Innovation Lab",
+    accel: 5, accelLabel: "Mastery-based", accelNote: "Students progress when they demonstrate understanding, not by age/grade",
+    address: "1200 Villa St, Mountain View, CA 94041", url: "https://khanlabschool.org",
+    bestFor: "Closest fit on all criteria",
+    pros: ["Closest to your office (~2 mi)", "Founded by Sal Khan (Khan Academy)", "TK-12 means no school transition", "Strong robotics program", "Spanish I through V + Advanced", "Most affordable nearby private option"],
+    cons: ["Some parent reviews mention teacher turnover", "Relatively newer school (founded 2014)", "Smaller community"],
+    neighborhood: "Old Mountain View / Downtown Mountain View", neighborhoodNote: "Walkable to school + work, Castro Street dining and farmers market. Homes $2-3.5M."
+  },
+  {
+    name: "Challenger School", type: "Private", distance: 2.5, drive: "7 min", tuition: 25430, tuitionDisplay: "~$25,430",
+    grades: "PS-8", coed: true, k12: false, topPick: false, rank: 10,
+    spanish: 1, spanishLabel: "Limited", spanishNote: "Not a core language immersion program",
+    stem: 2, stemLabel: "Basic", stemNote: "Traditional academic approach with strong math/science focus",
+    accel: 4, accelLabel: "Structured", accelNote: "Highly structured, rigorous academic curriculum focused on achievement",
+    address: "3880 Middlefield Rd, Palo Alto, CA 94303", url: "https://www.challengerschool.com",
+    bestFor: "Affordable, structured academics close to work",
+    pros: ["Very close to work", "Most affordable private option", "Strong academic foundations", "Established since 1980"],
+    cons: ["Very traditional/structured — less creativity", "Limited language program", "Not ideal for builder/robotics kid"],
+    neighborhood: "Midtown Palo Alto", neighborhoodNote: "Quiet, family-friendly, close to campus. Homes $3-4.5M."
+  },
+  {
+    name: "Waldorf School of the Peninsula", type: "Private", distance: 3, drive: "10 min", tuition: 37900, tuitionDisplay: "$37,900",
+    grades: "PS-12", coed: true, k12: true, topPick: false, rank: 14,
+    spanish: 3, spanishLabel: "Yes", spanishNote: "Spanish is part of the world language program",
+    stem: 2, stemLabel: "Hands-on (no tech)", stemNote: "Woodworking, crafts, practical arts. Screen-free philosophy — no coding/tech.",
+    accel: 1, accelLabel: "Not accelerated", accelNote: "Emphasizes whole-child development at a natural pace",
+    address: "180 N Rengstorff Ave, Mountain View, CA 94043", url: "https://www.waldorfpeninsula.org",
+    bestFor: "Whole-child, hands-on, screen-free approach",
+    pros: ["Very close to work", "Strong hands-on building/making ethos", "Beautiful whole-child approach", "PS-12 continuity"],
+    cons: ["Screen-free = no coding/tech robotics", "Not a match for accelerated learners", "Unconventional approach"],
+    neighborhood: "North Mountain View / Rengstorff Park", neighborhoodNote: "Walkable to school, parks nearby. Homes $2-3M."
+  },
+  {
+    name: "Keys School", type: "Private", distance: 4, drive: "10 min", tuition: 48300, tuitionDisplay: "$48,300",
+    grades: "K-8", coed: true, k12: false, topPick: true, rank: 2,
+    spanish: 5, spanishLabel: "Strong (track)", spanishNote: "Dedicated Spanish track — students choose Spanish or Mandarin in middle school",
+    stem: 3, stemLabel: "Moderate", stemNote: "Project-based learning with hands-on components. Not robotics-focused but strong science.",
+    accel: 4, accelLabel: "Individualized", accelNote: "'Taking the right challenge' philosophy; students set personal and academic goals",
+    address: "3981 El Camino Real, Palo Alto, CA 94306", url: "https://www.keysschool.org",
+    bestFor: "SEL + academics balance",
+    pros: ["Exceptionally well-reviewed (nearly all 5-star)", "Outstanding social-emotional learning", "Strong Spanish track", "~11 per advisory", "Both kids would thrive here"],
+    cons: ["K-8 only — need high school", "Less robotics emphasis", "Higher tuition than KLS"],
+    neighborhood: "South Palo Alto / Barron Park", neighborhoodNote: "Close to campus, tree-lined, more affordable PA. Homes $2.5-4M."
+  },
+  {
+    name: "Emerson Montessori", type: "Private", distance: 4, drive: "11 min", tuition: 32760, tuitionDisplay: "~$32,760",
+    grades: "PS-8", coed: true, k12: false, topPick: false, rank: 11,
+    spanish: 3, spanishLabel: "Yes (2x/wk)", spanishNote: "Spanish 2x/week, also Mandarin 2x/week",
+    stem: 2, stemLabel: "Montessori", stemNote: "Self-directed exploration through math, science. Not robotics-focused.",
+    accel: 3, accelLabel: "Self-paced", accelNote: "Montessori model — older students progress to algebra and HS math",
+    address: "2800 W Bayshore Rd, Palo Alto, CA 94303", url: "https://emersonmontessori.com",
+    bestFor: "Year-round, small, affordable Montessori",
+    pros: ["Year-round schedule (~12 days closed/yr)", "Full 9-hour day included", "Spanish AND Mandarin", "Affordable", "3:1 student ratio"],
+    cons: ["Very small (~30 students total)", "Less structured for competitive track", "Limited extracurriculars/sports"],
+    neighborhood: "Midtown Palo Alto / Bayshore", neighborhoodNote: "Close to campus, convenient to 101. Homes $2.5-4M."
+  },
+  {
+    name: "Bullis Charter School", type: "Public Charter", distance: 4, drive: "12 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "TK-8", coed: true, k12: false, topPick: false, rank: 8,
+    spanish: 2, spanishLabel: "Limited", spanishNote: "Some language instruction but not core Spanish immersion",
+    stem: 3, stemLabel: "Moderate", stemNote: "#8 elementary, #5 middle school in CA by U.S. News. Strong STEM focus.",
+    accel: 3, accelLabel: "Mixed reviews", accelNote: "Some parents note 'almost no acceleration for gifted' — others praise rigor",
+    address: "102 W Portola Ave, Los Altos, CA 94022", url: "https://www.bullischarterschool.com",
+    bestFor: "Top-ranked free public charter",
+    pros: ["FREE", "Extremely high academic rankings", "Close to work", "Los Altos community"],
+    cons: ["Lottery admission — no guarantee", "Limited Spanish", "Mixed gifted acceleration feedback", "Not strong robotics"],
+    neighborhood: "North Los Altos / Loyola Corners", neighborhoodNote: "Walkable downtown, excellent community, mature trees. Homes $3-5M."
+  },
+  {
+    name: "Silicon Valley International (SVIS)", type: "Private", distance: 5, drive: "14 min", tuition: 44750, tuitionDisplay: "$44,750",
+    grades: "PS-12", coed: true, k12: true, topPick: false, rank: 16,
+    spanish: 0, spanishLabel: "NO", spanishNote: "Chinese, French, German immersion only — no Spanish program",
+    stem: 3, stemLabel: "IB curriculum", stemNote: "IB curriculum with strong academics",
+    accel: 3, accelLabel: "IB rigor", accelNote: "IB framework provides rigorous international standards",
+    address: "151 Laura Ln, Palo Alto, CA 94303", url: "https://www.siliconvalleyinternational.org",
+    bestFor: "IB immersion (not Spanish though)",
+    pros: ["Prestigious IB Diploma", "Truly international community", "Exchange trips"],
+    cons: ["No Spanish — dealbreaker", "Immersion is Chinese/French/German only"],
+    neighborhood: "North Palo Alto", neighborhoodNote: "Near campus, quiet streets. Homes $3.5-6M."
+  },
+  {
+    name: "Helios School", type: "Private", distance: 5, drive: "14 min", tuition: 48625, tuitionDisplay: "$48,625",
+    grades: "K-8", coed: true, k12: false, topPick: false, rank: 5,
+    spanish: 2, spanishLabel: "Elective only", spanishNote: "Spanish offered as Explorations elective 3 days/week",
+    stem: 4, stemLabel: "MakerSpace + AoPS", stemNote: "Large ILab (MakerSpace), coding elective, Singapore Math + Art of Problem Solving",
+    accel: 5, accelLabel: "Gifted-specific", accelNote: "Purpose-built for gifted learners. Ability-based math. ~180 students, 2 teachers per 20.",
+    address: "597 Central Ave, Sunnyvale, CA 94086", url: "https://www.heliosschool.org",
+    bestFor: "Best for gifted learners specifically",
+    pros: ["Purpose-built for gifted kids", "MakerSpace excellent for builders", "Art of Problem Solving math", "Outdoor ed with camping trips", "Small strong community"],
+    cons: ["Spanish only an elective, not core", "K-8 only", "Some recent reviews suggest changes", "Higher tuition"],
+    neighborhood: "Downtown Sunnyvale", neighborhoodNote: "Walkable, safe, vibrant, close to Caltrain. Homes $2-3.5M."
+  },
+  {
+    name: "Castilleja School", type: "Private", distance: 6, drive: "18 min", tuition: 57000, tuitionDisplay: "~$55-60k",
+    grades: "6-12", coed: false, k12: false, topPick: false, rank: 12,
+    spanish: 3, spanishLabel: "Yes", spanishNote: "World language options available",
+    stem: 4, stemLabel: "Strong", stemNote: "Strong STEM program. Leadership-focused.",
+    accel: 4, accelLabel: "Rigorous", accelNote: "Highly rigorous college-prep",
+    address: "1310 Bryant St, Palo Alto, CA 94301", url: "https://www.castilleja.org",
+    bestFor: "Outstanding all-girls school",
+    pros: ["Exceptional for your daughter", "Confident thinkers, compassionate leaders", "Palo Alto location"],
+    cons: ["Girls only — son cannot attend", "Both kids can't go to same school"],
+    neighborhood: "Professorville / Downtown Palo Alto", neighborhoodNote: "Charming historic area, walkable. Homes $4-8M."
+  },
+  {
+    name: "Alto International School", type: "Private", distance: 8, drive: "20 min", tuition: 46900, tuitionDisplay: "~$46,900",
+    grades: "PK-12", coed: true, k12: true, topPick: false, rank: 17,
+    spanish: 0, spanishLabel: "NO", spanishNote: "Chinese, French, German immersion only",
+    stem: 3, stemLabel: "IB curriculum", stemNote: "IB MYP and Diploma program",
+    accel: 3, accelLabel: "IB rigor", accelNote: "IB framework",
+    address: "475 Pope St, Menlo Park, CA 94025", url: "https://www.greatschools.org/california/menlo-park/9696-Alto-International-School/",
+    bestFor: "Small IB school",
+    pros: ["IB World School", "Small classes (~18)", "PK-12 continuity"],
+    cons: ["No Spanish", "Very small (~243 students)"],
+    neighborhood: "The Willows, Menlo Park", neighborhoodNote: "Quiet, tree-lined. Homes $2.5-4M."
+  },
+  {
+    name: "Pinewood School", type: "Private", distance: 9, drive: "20 min", tuition: 55000, tuitionDisplay: "~$55,000",
+    grades: "K-12", coed: true, k12: true, topPick: false, rank: 13,
+    spanish: 2, spanishLabel: "Unknown details", spanishNote: "World language program — details not specified",
+    stem: 3, stemLabel: "College-prep", stemNote: "Rigorous college-prep science. 2 years life/earth science, then 3 years HS science.",
+    accel: 4, accelLabel: "7:1 ratio", accelNote: "7:1 student-teacher ratio, max 18 per class, 33/47 teachers hold advanced degrees",
+    address: "26800 Fremont Rd, Los Altos Hills, CA 94022", url: "https://www.pinewood.edu",
+    bestFor: "Tiny classes, K-12 continuity",
+    pros: ["K-12 — no transitions", "Tiny class sizes", "Beautiful Los Altos Hills campus", "Strong college prep"],
+    cons: ["Upper campus is remote in hills", "Spanish program unclear", "Less maker/robotics focus"],
+    neighborhood: "Los Altos Hills / South Los Altos", neighborhoodNote: "Semi-rural, large lots. Homes $4-8M+."
+  },
+  {
+    name: "Menlo School", type: "Private", distance: 10, drive: "20 min", tuition: 64718, tuitionDisplay: "$64,718",
+    grades: "6-12", coed: true, k12: false, topPick: false, rank: 6,
+    spanish: 4, spanishLabel: "Yes", spanishNote: "World language offerings including Spanish. Financial aid info in English and Spanish.",
+    stem: 4, stemLabel: "Strong", stemNote: "Strong STEM with full college-prep curriculum",
+    accel: 5, accelLabel: "Elite prep", accelNote: "Highly rigorous. Test-optional admissions. Competitive.",
+    address: "50 Valparaiso Ave, Atherton, CA 94027", url: "https://www.menloschool.org",
+    bestFor: "Elite overall program",
+    pros: ["Among Bay Area's most prestigious", "6-12 through HS", "$7.9M financial aid budget — meets 100% need", "Includes bus, lunch, Caltrain shuttle", "24 sports"],
+    cons: ["Most expensive on list", "Very competitive admissions", "Atherton adds commute"],
+    neighborhood: "West Menlo Park", neighborhoodNote: "#1 best place to raise a family in San Mateo County. Homes $3-6M."
+  },
+  {
+    name: "Woodland School", type: "Private", distance: 11, drive: "25 min", tuition: 42690, tuitionDisplay: "$42,690",
+    grades: "PS-8", coed: true, k12: false, topPick: false, rank: 9,
+    spanish: 4, spanishLabel: "Yes (all grades)", spanishNote: "Spanish at all grade levels",
+    stem: 3, stemLabel: "Moderate", stemNote: "Arts + academics integrated. Outdoor campus for science. Project-based.",
+    accel: 3, accelLabel: "Tailored", accelNote: "School works hard to tailor appropriately challenging academics",
+    address: "360 La Cuesta Dr, Portola Valley, CA 94028", url: "https://www.woodland-school.org",
+    bestFor: "Beautiful campus, Spanish at all levels",
+    pros: ["Overwhelmingly positive reviews", "Spanish at all grades", "Beautiful 10+ acre campus", "Small classes (12-15)", "Intl service trip in 8th grade"],
+    cons: ["PS-8 only", "Portola Valley is remote/expensive", "Less STEM-specific"],
+    neighborhood: "Portola Valley or Ladera", neighborhoodNote: "Rural, serene, hiking access. Homes $3-7M+."
+  },
+  {
+    name: "BASIS Independent", type: "Private", distance: 16, drive: "30 min", tuition: 42000, tuitionDisplay: "~$42,000",
+    grades: "TK-12", coed: true, k12: true, topPick: false, rank: 15,
+    spanish: 2, spanishLabel: "Limited", spanishNote: "Focus is on STEM curriculum. Limited language info.",
+    stem: 4, stemLabel: "Strong academics", stemNote: "Separate Chem, Bio, Physics in MS. Engineering and tech classes. Hands-on clubs.",
+    accel: 5, accelLabel: "Extremely accelerated", accelNote: "Students take any math level based on ability. Some say 'too accelerated/cramming.'",
+    address: "1290 Parkmoor Ave, San Jose, CA 95126", url: "https://www.niche.com/k12/basis-independent-silicon-valley-san-jose-ca/",
+    bestFor: "Maximum academic rigor, TK-12",
+    pros: ["Among most academically rigorous", "Any math level by ability", "Early physics/chem/bio", "18 sports"],
+    cons: ["High teacher turnover", "Can feel like pressure cooker", "Limited hands-on/maker", "Humanities reportedly weaker"],
+    neighborhood: "Willow Glen, San Jose", neighborhoodNote: "Charming downtown, walkable, excellent community. Homes $1.5-2.5M."
+  },
+  {
+    name: "Crystal Springs Uplands", type: "Private", distance: 18, drive: "30 min", tuition: 57000, tuitionDisplay: "~$57,000",
+    grades: "6-12", coed: true, k12: false, topPick: false, rank: 7,
+    spanish: 3, spanishLabel: "Yes", spanishNote: "World language program available",
+    stem: 4, stemLabel: "STEM Studio", stemNote: "STEM Invention Studio. Annual STEM Symposium with 150+ attendees.",
+    accel: 4, accelLabel: "Rigorous", accelNote: "Top private college prep in Bay Area",
+    address: "10 Davis Dr, Belmont, CA 94002", url: "https://www.crystal.org",
+    bestFor: "STEM Invention Studio, 6-12",
+    pros: ["Dedicated STEM Invention Studio", "Annual STEM Symposium", "6-12 continuity", "Belmont location"],
+    cons: ["Far from Mountain View", "Less info on Spanish depth"],
+    neighborhood: "Belmont", neighborhoodNote: "#5 best place for families in San Mateo County. Homes $2-3.5M."
+  },
+  {
+    name: "The Harker School", type: "Private", distance: 18, drive: "35 min", tuition: 61450, tuitionDisplay: "$61,450",
+    grades: "K-12", coed: true, k12: true, topPick: true, rank: 3,
+    spanish: 5, spanishLabel: "Strong (5 languages)", spanishNote: "Spanish, French, Mandarin, Japanese, or Latin",
+    stem: 5, stemLabel: "Innovation Lab", stemNote: "Design thinking, Innovation Lab, programming, architecture, engineering, app design, CS. 24 sports.",
+    accel: 5, accelLabel: "Highly accelerated", accelNote: "Pre-algebra through pre-calculus in MS. Separate sciences.",
+    address: "3800 Blackford Ave, San Jose, CA 95117", url: "https://www.harker.org",
+    bestFor: "Bay Area's STEM powerhouse",
+    pros: ["Gold standard for STEM", "Innovation Lab perfect for builders", "5 language options", "K-12 continuity", "Tuition includes before/after care, lunch, shuttle", "Math through pre-calc in MS"],
+    cons: ["Very competitive/high-pressure", "'Tiger mom' culture noted by some", "Long commute from MV", "Most expensive tier"],
+    neighborhood: "West San Jose / Saratoga border", neighborhoodNote: "Excellent backup public schools, quiet residential. Homes $2-3.5M."
+  },
+  {
+    name: "Hillbrook School", type: "Private", distance: 18, drive: "35 min", tuition: 51100, tuitionDisplay: "$51,100",
+    grades: "JK-12", coed: true, k12: true, topPick: true, rank: 4,
+    spanish: 4, spanishLabel: "Core language", spanishNote: "Spanish or Mandarin in MS. 'World Language is a core class' — meets with same frequency as English, Math, Science.",
+    stem: 4, stemLabel: "Maker/engineering", stemNote: "'Learn by doing' philosophy. Engineering lab, collaborative projects. Social Entrepreneurship center.",
+    accel: 4, accelLabel: "Just-right challenge", accelNote: "Differentiated for each student. 'Academics to be excellent.'",
+    address: "300 Marchmont Dr, Los Gatos, CA 95032", url: "https://www.hillbrook.org",
+    bestFor: "Learn by doing, Spanish as core",
+    pros: ["Beautiful campus", "Spanish as core language", "World Language = same weight as core subjects", "'Learn by doing' perfect for builder", "Social entrepreneurship program", "Bus + Caltrain shuttle in tuition", "Now JK-12"],
+    cons: ["Los Gatos is 35+ min from MV", "Premium tuition"],
+    neighborhood: "Los Gatos", neighborhoodNote: "Charming downtown, excellent dining, safe. Homes $2.5-4.5M."
+  },
+  {
+    name: "Stratford School", type: "Private", distance: 20, drive: "35 min", tuition: 32000, tuitionDisplay: "~$32,000",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 18,
+    spanish: 1, spanishLabel: "Limited", spanishNote: "Not prominently featured",
+    stem: 3, stemLabel: "STEAM program", stemNote: "STEAM central. 'Exceptional execution' per parents.",
+    accel: 4, accelLabel: "+1 grade level", accelNote: "Material taught one grade above level",
+    address: "1718 Andover Ln, San Jose, CA 95124", url: "https://www.niche.com/k12/stratford-school-san-jose-middle-school-san-jose-ca/",
+    bestFor: "Affordable STEAM, one grade ahead",
+    pros: ["Strong parent reviews", "STEAM-focused", "One grade above level", "More supervision"],
+    cons: ["Far from MV", "Facility needs improvement", "Limited languages", "Smaller campus"],
+    neighborhood: "Cambrian Park, San Jose", neighborhoodNote: "Close to campus, quiet, family-friendly. Homes $1.5-2.5M."
+  },
+  {
+    name: "The Nueva School", type: "Private", distance: 23, drive: "45 min", tuition: 65760, tuitionDisplay: "$65,760",
+    grades: "PK-12", coed: true, k12: true, topPick: false, rank: 7,
+    spanish: 2, spanishLabel: "Limited", spanishNote: "World language available but not prominently featured",
+    stem: 4, stemLabel: "Design thinking", stemNote: "Design thinking central. Hands-on projects, maker activities. Founded for gifted learners.",
+    accel: 5, accelLabel: "Gifted-specific", accelNote: "Purpose-built for gifted. 6:1 ratio. Quest Night. 100% aid for families under $150K.",
+    address: "6565 Skyline Blvd, Hillsborough, CA 94010", url: "https://www.nuevaschool.org",
+    bestFor: "Premier school for gifted kids",
+    pros: ["Premier Bay Area gifted school", "Design thinking everywhere", "6:1 ratio (extraordinary)", "PK-12 continuity", "100% aid under $150K income", "Strong SEL"],
+    cons: ["Farthest from office (45 min)", "Most expensive school", "Spanish not emphasized"],
+    neighborhood: "San Mateo (Village or Bay Meadows)", neighborhoodNote: "Lively downtown, good value, family-friendly. Homes $2-3.5M."
+  },
+  // ——— PUBLIC SCHOOLS ———
+  {
+    name: "Greene Middle School", type: "Public", distance: 6, drive: "18 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 6,
+    spanish: 5, spanishLabel: "Spanish Bridge Immersion", spanishNote: "Dedicated 3-year Spanish Bridge program bridging from Escondido Elementary immersion. Taught primarily in Spanish — ideal for fluent speakers.",
+    stem: 3, stemLabel: "Strong", stemNote: "Strong STEM curriculum across PAUSD. Technology integration. Feeds into Paly/Gunn.",
+    accel: 4, accelLabel: "Accelerated math", accelNote: "PAUSD accelerated math pathways. Advanced course options.",
+    address: "750 N. California Ave, Palo Alto, CA 94303", url: "https://greene.pausd.org",
+    bestFor: "Best public option for Spanish — Bridge Immersion program",
+    pros: ["Only area public school with Spanish immersion for fluent speakers", "2026 CA Distinguished School", "Feeds into Palo Alto High / Gunn (top-10 CA high schools)", "760 students, 15:1 ratio", "FREE"],
+    cons: ["Palo Alto housing extremely expensive ($2.8-4.5M)", "Spanish Bridge enrollment may be competitive", "Not a STEM magnet specifically"],
+    neighborhood: "Midtown Palo Alto / Barron Park / Green Acres", neighborhoodNote: "Near California Ave. Homes $2.8-4.5M SFH; $1.2-2M condos."
+  },
+  {
+    name: "Lawson Middle School", type: "Public", distance: 10, drive: "20 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 8,
+    spanish: 2, spanishLabel: "Beginner elective", spanishNote: "Spanish I as world language elective — 2-year sequence = 1 year HS Spanish. Too basic for fluent speakers.",
+    stem: 5, stemLabel: "Top 1% science", stemNote: "85% of 8th graders proficient on CAST Science. Strong math culture. Feeds into Monta Vista High (top STEM HS nationally).",
+    accel: 5, accelLabel: "Highly accelerated", accelNote: "Top 1% in CA: 88% math proficient, 87% ELA. Accelerated/compacted math. National Blue Ribbon School.",
+    address: "10401 Vista Dr, Cupertino, CA 95014", url: "https://www.cusdk8.org/lawson",
+    bestFor: "Top 1% test scores, elite STEM feeder to Monta Vista",
+    pros: ["Top 1% test scores in California", "2026 CA Distinguished School + National Blue Ribbon", "Feeds into Monta Vista High", "85% science proficiency", "FREE"],
+    cons: ["Spanish is beginner only — won't challenge fluent speakers", "Extremely competitive/high-pressure culture", "Cupertino housing very high ($2.5-4M)"],
+    neighborhood: "Vista Park / Rancho Rinconada / Monta Vista, Cupertino", neighborhoodNote: "Homes $2.5-4M SFH."
+  },
+  {
+    name: "Egan Junior High", type: "Public", distance: 5, drive: "12 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "7-8", coed: true, k12: false, topPick: false, rank: 7,
+    spanish: 2, spanishLabel: "Elective", spanishNote: "Spanish available as world language elective. Levels unclear — confirm with school.",
+    stem: 4, stemLabel: "Robotics & Drones", stemNote: "Dedicated Robotics & Drones elective, Coding, Digital Art & Media, Applied Design & Maker Space Lab.",
+    accel: 4, accelLabel: "GATE / Gifted", accelNote: "Los Altos SD Gifted Learners program with differentiated instruction. Accelerated math.",
+    address: "100 W. Portola Ave, Los Altos, CA 94022", url: "https://www.lasdschools.org/egan",
+    bestFor: "Robotics & drones + Maker Space, close by",
+    pros: ["Excellent robotics/drones elective", "2026 CA Distinguished School", "Maker Space lab", "Coding elective", "GATE/gifted program", "Feeds into Los Altos High", "FREE"],
+    cons: ["Only grades 7-8 (need 6th grade elsewhere)", "Los Altos housing very expensive ($3.5-5.5M)", "Spanish may be limited to elective level"],
+    neighborhood: "Downtown Los Altos / Loyola Corners", neighborhoodNote: "Homes $3.5-5.5M SFH."
+  },
+  {
+    name: "Blach Junior High", type: "Public", distance: 6, drive: "15 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "7-8", coed: true, k12: false, topPick: false, rank: 9,
+    spanish: 2, spanishLabel: "Elective", spanishNote: "Spanish offered as elective/after-school. Levels unclear.",
+    stem: 4, stemLabel: "VEX Robotics + Python", stemNote: "Sr. Robotics, VEX IQ tournaments, Coding with Python, STEM enrichment via Los Altos Ed Foundation.",
+    accel: 5, accelLabel: "Top 1% / Gifted", accelNote: "Top 1% CA test scores: 86% math, 89% reading. National Blue Ribbon School. GATE/Gifted Learners program.",
+    address: "1120 Covington Rd, Los Altos, CA 94024", url: "https://www.lasdschools.org/blach",
+    bestFor: "Top 1% academics + VEX Robotics",
+    pros: ["Top 1% test scores in CA (#12 ranked)", "National Blue Ribbon + 2026 Distinguished", "VEX Robotics + Python coding", "Small school (404 students, 17:1)", "FREE"],
+    cons: ["Only grades 7-8", "Los Altos housing very expensive ($3.5-5.5M)", "Spanish may be limited", "Small = fewer elective choices"],
+    neighborhood: "South Los Altos / near Covington Rd", neighborhoodNote: "Homes $3.5-5.5M SFH."
+  },
+  {
+    name: "Kennedy Middle School", type: "Public", distance: 8, drive: "18 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 7,
+    spanish: 2, spanishLabel: "Beginner elective", spanishNote: "Spanish as elective alongside art, band, orchestra, robotics, drama.",
+    stem: 5, stemLabel: "Natl Science Olympiad Champs", stemNote: "Back-to-back National Science Olympiad Champions (2021, 2024). Robotics elective. Science Bowl. Elite competition STEM.",
+    accel: 4, accelLabel: "Accelerated", accelNote: "Accelerated math options. Competition-driven STEM culture. #8 Best CA Middle School (US News). National Blue Ribbon.",
+    address: "821 Bubb Rd, Cupertino, CA 95014", url: "https://www.cusdk8.org/kennedy",
+    bestFor: "National Science Olympiad champions — elite STEM",
+    pros: ["Back-to-back National Science Olympiad Champions", "Robotics and coding electives", "National Blue Ribbon School", "Strong math/science competition culture", "Feeds into Cupertino/Monta Vista High", "FREE"],
+    cons: ["Spanish is beginner only", "Intense competition culture", "Cupertino housing very high ($2.5-4M)"],
+    neighborhood: "Cupertino near Bubb Rd / Monta Vista", neighborhoodNote: "Homes $2.5-4M SFH."
+  },
+  {
+    name: "JLS Middle School", type: "Public", distance: 7, drive: "18 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 10,
+    spanish: 3, spanishLabel: "Multiple levels", spanishNote: "World language electives including Spanish at multiple levels. Heritage/advanced levels may be available — not immersion.",
+    stem: 3, stemLabel: "Design & Tech", stemNote: "Design & Tech elective, award-winning Industrial Technology teacher, KJLS Video Production.",
+    accel: 4, accelLabel: "Connections program", accelNote: "'Connections' inquiry-based learning community — self-directed, cross-curricular. Accelerated math. #13 Best CA Public MS.",
+    address: "480 E. Meadow Dr, Palo Alto, CA 94306", url: "https://jls.pausd.org",
+    bestFor: "Connections inquiry program for self-motivated learners",
+    pros: ["Connections program great for gifted/self-directed learners", "2026 CA Distinguished School", "1,000+ students with diverse electives", "Award-winning Industrial Tech", "Feeds into Paly/Gunn", "FREE"],
+    cons: ["Spanish not immersion level", "Palo Alto housing very expensive", "Large school — less individual attention"],
+    neighborhood: "Midtown Palo Alto / Greenmeadow / Charleston Meadows", neighborhoodNote: "Homes $2.8-4.5M SFH; $1.2-2M condos."
+  },
+  {
+    name: "Graham Middle School", type: "Public", distance: 2, drive: "5 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 11,
+    spanish: 2, spanishLabel: "Some Spanish", spanishNote: "Some Spanish instruction. District has Spanish-English Dual Immersion at Mistral Elementary — MS continuation unclear.",
+    stem: 4, stemLabel: "FLL + Underwater ROV", stemNote: "FIRST Lego League robotics, MATE ROV underwater robotics, dedicated STEM teacher (13+ yrs), STEAM pathways with KCI.",
+    accel: 3, accelLabel: "GATE", accelNote: "GATE (Gifted & Talented) program. 2026 CA Distinguished School. 56% math, 63% reading proficient.",
+    address: "1175 Castro St, Mountain View, CA 94040", url: "https://www.mvwsd.org/schools_and_programs/middle_schools/graham",
+    bestFor: "Closest public school — 2 mi, GATE + robotics",
+    pros: ["Closest school to Shoreline (~2 mi)", "2026 CA Distinguished School", "FLL + MATE ROV underwater robotics", "Dedicated STEM teacher", "GATE program", "Most affordable housing nearby", "FREE"],
+    cons: ["Lower test scores (56% math, 63% reading)", "Spanish program unclear for fluent speakers", "Less prestigious feeder path", "Wider range of academic levels"],
+    neighborhood: "Old Mountain View / Castro St / Rex Manor / Cuesta Park", neighborhoodNote: "Homes $1.5-2.5M SFH; $800K-1.5M condos."
+  },
+  {
+    name: "Cupertino Middle School", type: "Public", distance: 8, drive: "18 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 13,
+    spanish: 2, spanishLabel: "Beginner elective", spanishNote: "Spanish 1A world language elective — 2-year sequence = 1 year HS Spanish. Seal of Biliteracy recognition.",
+    stem: 3, stemLabel: "Technology electives", stemNote: "Technology electives and STEM programming. Strong math/science performance.",
+    accel: 4, accelLabel: "Accelerated math", accelNote: "Accelerated math pathways. 75% math proficient, 77% reading. Feeds into Homestead High.",
+    address: "1650 S Bernardo Ave, Sunnyvale, CA 94087", url: "https://www.cusdk8.org/cupertinoms",
+    bestFor: "Solid all-around Cupertino USD school",
+    pros: ["8/10 GreatSchools", "1,081 students — diverse electives", "World language + technology electives", "Slightly more affordable Sunnyvale location", "FREE"],
+    cons: ["Spanish is beginner only", "Not standout for STEM vs Kennedy/Lawson", "Large class sizes (19:1)"],
+    neighborhood: "Sunnyvale near Bernardo Ave / Lakewood Village", neighborhoodNote: "Homes $1.8-2.8M SFH."
+  },
+  {
+    name: "Hyde Middle School", type: "Public", distance: 11, drive: "22 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 14,
+    spanish: 2, spanishLabel: "Likely elective", spanishNote: "World language electives likely available — consistent with CUSD. Confirm levels.",
+    stem: 3, stemLabel: "Technology", stemNote: "Technology and science programs. FBLA connection.",
+    accel: 4, accelLabel: "Accelerated", accelNote: "Accelerated math. 77% math, 81% reading proficient. #40 in CA Middle Schools (US News). Feeds into Cupertino High.",
+    address: "19325 Bollinger Rd, Cupertino, CA 95014", url: "https://www.cusdk8.org/hyde",
+    bestFor: "#40 CA middle school, Cupertino USD",
+    pros: ["8/10 GreatSchools, #40 in CA", "Part of highly regarded Cupertino Union SD", "Feeds into Cupertino High", "FREE"],
+    cons: ["Furthest Cupertino school (~11 mi)", "Spanish likely beginner only", "No standout STEM specialty"],
+    neighborhood: "West Cupertino near Bollinger Rd", neighborhoodNote: "Homes $2.5-3.5M SFH."
+  },
+  {
+    name: "Columbia Middle School", type: "Public", distance: 4, drive: "10 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 15,
+    spanish: 5, spanishLabel: "Dual Immersion", spanishNote: "Spanish Dual Immersion program (Juntos/Juntas). Dedicated Spanish language curriculum — one of the few area schools with true DI at middle school level.",
+    stem: 2, stemLabel: "Basic STEM", stemNote: "STEM programs funded by Sunnyvale Ed Foundation. Science inquiry labs. Basic STEM offerings.",
+    accel: 1, accelLabel: "Limited", accelNote: "No formal GATE or accelerated program. 26% math proficient, 39% reading.",
+    address: "739 Morse Ave, Sunnyvale, CA 94085", url: "https://www.sesd.org/columbia",
+    bestFor: "Spanish Dual Immersion — close & affordable, but lower academics",
+    pros: ["Spanish Dual Immersion — excellent for fluent speakers", "Close to Shoreline (~4 mi)", "Most affordable neighborhood option", "Diverse student body", "FREE"],
+    cons: ["Significantly lower test scores (26% math, 39% reading)", "No formal gifted/accelerated program", "Basic STEM compared to Cupertino/PA schools", "6/10 GreatSchools"],
+    neighborhood: "Sunnyvale near Morse Ave / Lakewood", neighborhoodNote: "Homes $1.4-2M SFH; $700K-1.2M condos."
+  },
+  {
+    name: "Peterson Middle School", type: "Public", distance: 6, drive: "15 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 16,
+    spanish: 2, spanishLabel: "Elective", spanishNote: "World language electives available. Confirm levels.",
+    stem: 2, stemLabel: "General", stemNote: "General science/tech. Feeder to Santa Clara High (49ers STEM Leadership Institute).",
+    accel: 3, accelLabel: "Accelerated Eng/Math", accelNote: "Accelerated English 7-8th. Compacted Algebra 1/Math 8 in 8th grade. Peterson+ program ending June 2026.",
+    address: "1380 Rosalia Ave, Sunnyvale, CA 94087", url: "https://www.santaclarausd.org/peterson",
+    bestFor: "Accelerated options, feeds into 49ers STEM at SCHS",
+    pros: ["Accelerated English and compacted math", "7/10 GreatSchools", "Feeds into Santa Clara High STEM program", "Reasonable distance", "FREE"],
+    cons: ["Peterson+ accelerated program ending 2026", "Spanish details unclear", "No standout STEM at MS level"],
+    neighborhood: "Sunnyvale near Rosalia Ave / Ponderosa Park", neighborhoodNote: "Homes $1.6-2.2M SFH."
+  },
+  {
+    name: "Crittenden Middle School", type: "Public", distance: 2.5, drive: "7 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 17,
+    spanish: 1, spanishLabel: "Unknown", spanishNote: "Limited information. Confirm with school.",
+    stem: 3, stemLabel: "FLL Robotics", stemNote: "STEM/Robotics teacher coaches FLL teams. Similar offerings to Graham.",
+    accel: 3, accelLabel: "GATE", accelNote: "GATE program offered. 51% math, 64% reading proficient.",
+    address: "1701 Rock St, Mountain View, CA 94043", url: "https://www.mvwsd.org/schools_and_programs/middle_schools/crittenden",
+    bestFor: "Very close + GATE, but less info available",
+    pros: ["Very close (~2.5 mi)", "GATE program", "FLL robotics", "Mountain View prices accessible", "FREE"],
+    cons: ["Lower test scores", "Less info on programs", "Spanish program unclear"],
+    neighborhood: "North Mountain View / Whisman", neighborhoodNote: "Homes $1.4-2.2M SFH; $800K-1.3M condos."
+  },
+  {
+    name: "Buchser Middle School", type: "Public", distance: 6, drive: "15 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 16,
+    spanish: 2, spanishLabel: "Elective", spanishNote: "World language electives. Confirm levels with school.",
+    stem: 2, stemLabel: "General", stemNote: "General STEM curriculum. Santa Clara USD investing in STEM.",
+    accel: 3, accelLabel: "Likely available", accelNote: "Accelerated options likely similar to Peterson. 8/10 GreatSchools.",
+    address: "1111 Bellomy St, Santa Clara, CA 95050", url: "https://www.santaclarausd.org/buchser",
+    bestFor: "Solid 8/10 academics, affordable Santa Clara",
+    pros: ["8/10 GreatSchools", "Santa Clara more affordable than Cupertino/PA", "Moderate distance", "FREE"],
+    cons: ["Limited info on STEM/Spanish programs", "Not known for standout programs"],
+    neighborhood: "Old Quad, Santa Clara (near SCU)", neighborhoodNote: "Homes $1.5-2.2M SFH."
+  },
+  {
+    name: "Discovery Charter School", type: "Public Charter", distance: 12, drive: "25 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "K-8", coed: true, k12: false, topPick: false, rank: 18,
+    spanish: 1, spanishLabel: "Unknown", spanishNote: "Not specifically noted. Confirm with school.",
+    stem: 3, stemLabel: "Project-based", stemNote: "Project-based learning approach. STEM opportunities. G&T program.",
+    accel: 4, accelLabel: "Gifted & Talented", accelNote: "Gifted & Talented program. Individualized learning via project-based approach. 63% math, 73% reading.",
+    address: "4021 Teale Ave, San Jose, CA 95117", url: "https://www.discoverycharterschool.org",
+    bestFor: "Charter with G&T program + project-based learning",
+    pros: ["Strong test scores for charter", "Project-based learning fits gifted learners", "G&T program", "K-8 continuity", "FREE"],
+    cons: ["Far from Shoreline (~12 mi)", "Spanish program unclear", "Charter = lottery admission"],
+    neighborhood: "West San Jose near Teale Ave", neighborhoodNote: "Homes $1.3-1.8M SFH."
+  },
+  {
+    name: "Miller Middle School", type: "Public", distance: 12, drive: "25 min", tuition: 0, tuitionDisplay: "FREE",
+    grades: "6-8", coed: true, k12: false, topPick: false, rank: 14,
+    spanish: 1, spanishLabel: "Mandarin (CLIP), not Spanish", spanishNote: "Hosts Cupertino Language Immersion Program (CLIP) — Mandarin only. General electives may include Spanish.",
+    stem: 3, stemLabel: "30+ clubs", stemNote: "Strong academics. 30+ clubs. Recently celebrated CLIP 25th anniversary.",
+    accel: 4, accelLabel: "Accelerated / Blue Ribbon", accelNote: "National Blue Ribbon School 2024. Accelerated math pathways. 8/10 GreatSchools.",
+    address: "6151 Rainbow Dr, San Jose, CA 95129", url: "https://www.cusdk8.org/miller",
+    bestFor: "National Blue Ribbon 2024, Cupertino USD",
+    pros: ["National Blue Ribbon School 2024", "8/10 GreatSchools, 30+ clubs", "Part of excellent Cupertino Union SD", "FREE"],
+    cons: ["Far from Shoreline (~12 mi)", "Language immersion is Mandarin, not Spanish", "No standout robotics noted"],
+    neighborhood: "West San Jose near Rainbow Dr / Saratoga border", neighborhoodNote: "Homes $2-3M SFH."
+  }
+];
+
+let compareSet = new Set();
+let currentView = 'cards';
+
+// Render functions
+function getFiltered() {
+  const maxDist = +document.getElementById('f-distance').value;
+  const maxTuition = +document.getElementById('f-tuition').value;
+  const spanishFilter = document.getElementById('f-spanish').value;
+  const minStem = +document.getElementById('f-stem').value;
+  const gradesFilter = document.getElementById('f-grades').value;
+  const sortBy = document.getElementById('f-sort').value;
+
+  let filtered = schools.filter(s => {
+    if (s.distance > maxDist) return false;
+    if (maxTuition === 0 && s.tuition !== 0) return false;
+    if (maxTuition > 0 && s.tuition > maxTuition) return false;
+    if (spanishFilter === 'strong' && s.spanish < 4) return false;
+    if (spanishFilter === 'yes' && s.spanish < 1) return false;
+    if (s.stem < minStem) return false;
+    if (gradesFilter === 'k12' && !s.k12) return false;
+    const typeFilter = document.getElementById('f-type').value;
+    if (typeFilter === 'public' && s.type === 'Private') return false;
+    if (typeFilter === 'private' && s.type !== 'Private') return false;
+    return true;
+  });
+
+  const sorters = {
+    rank: (a, b) => a.rank - b.rank,
+    distance: (a, b) => a.distance - b.distance,
+    tuition: (a, b) => a.tuition - b.tuition,
+    spanish: (a, b) => b.spanish - a.spanish,
+    stem: (a, b) => b.stem - a.stem,
+    name: (a, b) => a.name.localeCompare(b.name)
+  };
+  filtered.sort(sorters[sortBy] || sorters.rank);
+  return filtered;
+}
+
+function dots(n, max, color) {
+  return Array.from({length: max}, (_, i) =>
+    `<div class="dot ${i < n ? 'filled ' + color : ''}"></div>`
+  ).join('');
+}
+
+function scoreBar(val, max, color) {
+  const pct = (val / max) * 100;
+  const colors = { green: 'var(--green)', yellow: 'var(--yellow)', blue: 'var(--accent2)' };
+  return `<div class="score-bar"><div class="score-track"><div class="score-fill" style="width:${pct}%;background:${colors[color]||colors.blue}"></div></div><span class="score-label">${val}/${max}</span></div>`;
+}
+
+function renderCards() {
+  const grid = document.getElementById('cards-grid');
+  const filtered = getFiltered();
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="empty-state"><h3>No schools match your filters</h3><p>Try adjusting your criteria above</p></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(s => `
+    <div class="school-card ${s.topPick ? 'top-pick' : ''}" onclick="openModal('${s.name}')">
+      <div class="card-header">
+        <h3>${s.name}</h3>
+        <span class="card-rank">#${s.rank} pick</span>
+      </div>
+      <div class="card-meta">
+        <span class="meta-item">~${s.distance} mi / <strong>${s.drive}</strong></span>
+        <span class="meta-item"><strong>${s.tuitionDisplay}</strong>/yr</span>
+        <span class="meta-item">${s.grades}</span>
+      </div>
+      <div class="card-badges">
+        ${s.spanish >= 4 ? `<span class="badge badge-spanish">Spanish: ${s.spanishLabel}</span>` : s.spanish > 0 ? `<span class="badge badge-spanish weak">Spanish: ${s.spanishLabel}</span>` : `<span class="badge" style="background:rgba(248,113,113,0.12);color:var(--red)">No Spanish</span>`}
+        ${s.stem >= 4 ? `<span class="badge badge-stem">STEM: ${s.stemLabel}</span>` : ''}
+        ${s.accel >= 4 ? `<span class="badge badge-accel">${s.accelLabel}</span>` : ''}
+        ${s.tuition === 0 ? `<span class="badge badge-free">FREE</span>` : ''}
+        ${!s.coed ? `<span class="badge badge-girls">Girls Only</span>` : ''}
+        ${s.type === 'Public Charter' ? `<span class="badge" style="background:rgba(96,165,250,0.15);color:var(--blue)">Public Charter</span>` : s.type === 'Public' ? `<span class="badge" style="background:rgba(96,165,250,0.15);color:var(--blue)">Public</span>` : ''}
+      </div>
+      <div class="card-summary">${s.bestFor}</div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="btn-sm" onclick="openModal('${s.name}')">Details</button>
+        <button class="btn-sm compare-btn ${compareSet.has(s.name)?'active':''}" onclick="toggleCompare('${s.name}')">
+          ${compareSet.has(s.name) ? 'In Compare' : '+ Compare'}
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTable() {
+  const tbody = document.getElementById('table-body');
+  const filtered = getFiltered();
+  tbody.innerHTML = filtered.map(s => `
+    <tr>
+      <td class="school-name" onclick="openModal('${s.name}')">${s.name}${s.topPick?' *':''}</td>
+      <td>${s.type}</td>
+      <td>~${s.distance} mi</td>
+      <td>${s.drive}</td>
+      <td>${s.tuitionDisplay}</td>
+      <td><div class="strength-dots">${dots(s.spanish, 5, 'yellow')}</div></td>
+      <td><div class="strength-dots">${dots(s.stem, 5, '')}</div></td>
+      <td><div class="strength-dots">${dots(s.accel, 5, 'green')}</div></td>
+      <td>${s.grades}</td>
+      <td>${s.coed ? 'Yes' : 'Girls'}</td>
+    </tr>
+  `).join('');
+}
+
+function renderCompare() {
+  const el = document.getElementById('compare-content');
+  const selected = schools.filter(s => compareSet.has(s.name));
+  if (selected.length < 2) {
+    el.innerHTML = '<div class="empty-state"><h3>Select 2+ schools to compare</h3><p>Use the "+ Compare" button on school cards, then switch to this tab</p></div>';
+    return;
+  }
+  const rows = [
+    { label: 'School', fn: s => `<strong>${s.name}</strong>` },
+    { label: 'Type', fn: s => s.type },
+    { label: 'Distance', fn: s => `~${s.distance} mi / ${s.drive}` },
+    { label: 'Tuition', fn: s => s.tuitionDisplay + '/yr', best: s => s.tuition },
+    { label: 'Grades', fn: s => s.grades },
+    { label: 'Co-ed', fn: s => s.coed ? 'Yes' : 'Girls only' },
+    { label: 'Spanish', fn: s => `${scoreBar(s.spanish,5,'yellow')}<div style="margin-top:4px;font-size:0.82rem;color:var(--text2)">${s.spanishNote}</div>` },
+    { label: 'STEM/Robotics', fn: s => `${scoreBar(s.stem,5,'blue')}<div style="margin-top:4px;font-size:0.82rem;color:var(--text2)">${s.stemNote}</div>` },
+    { label: 'Accelerated', fn: s => `${scoreBar(s.accel,5,'green')}<div style="margin-top:4px;font-size:0.82rem;color:var(--text2)">${s.accelNote}</div>` },
+    { label: 'Pros', fn: s => `<ul style="padding-left:14px;margin:0">${s.pros.map(p=>`<li class="pro" style="font-size:0.82rem;margin-bottom:3px">${p}</li>`).join('')}</ul>` },
+    { label: 'Cons', fn: s => `<ul style="padding-left:14px;margin:0">${s.cons.map(c=>`<li class="con" style="font-size:0.82rem;margin-bottom:3px">${c}</li>`).join('')}</ul>` },
+    { label: 'Neighborhood', fn: s => `<strong>${s.neighborhood}</strong><br><span style="font-size:0.82rem;color:var(--text2)">${s.neighborhoodNote}</span>` }
+  ];
+
+  // Find best tuition
+  const minTuition = Math.min(...selected.map(s => s.tuition));
+
+  el.innerHTML = `<div class="table-wrap"><table class="compare-table">
+    ${rows.map(r => `<tr>
+      <th>${r.label}</th>
+      ${selected.map(s => `<td ${r.best && r.best(s) === minTuition && selected.length > 1 ? 'class="best-value"' : ''}>${r.fn(s)}</td>`).join('')}
+    </tr>`).join('')}
+  </table></div>`;
+}
+
+function openModal(name) {
+  const s = schools.find(x => x.name === name);
+  if (!s) return;
+  const modal = document.getElementById('modal');
+  document.getElementById('modal-content').innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2>${s.name}</h2>
+    <div class="modal-subtitle">${s.address}</div>
+    <div class="modal-grid">
+      <div class="modal-stat"><label>Distance</label><span>~${s.distance} mi / ${s.drive}</span></div>
+      <div class="modal-stat"><label>Tuition</label><span>${s.tuitionDisplay}/yr</span></div>
+      <div class="modal-stat"><label>Grades</label><span>${s.grades}</span></div>
+      <div class="modal-stat"><label>Co-ed</label><span>${s.coed ? 'Yes' : 'Girls only'}</span></div>
+      <div class="modal-stat"><label>Type</label><span>${s.type}</span></div>
+    </div>
+    <div class="modal-section">
+      <h4>Spanish Language ${scoreBar(s.spanish,5,'yellow')}</h4>
+      <p>${s.spanishNote}</p>
+    </div>
+    <div class="modal-section">
+      <h4>STEM / Robotics ${scoreBar(s.stem,5,'blue')}</h4>
+      <p>${s.stemNote}</p>
+    </div>
+    <div class="modal-section">
+      <h4>Acceleration ${scoreBar(s.accel,5,'green')}</h4>
+      <p>${s.accelNote}</p>
+    </div>
+    <div class="modal-section">
+      <h4>Pros</h4>
+      <ul>${s.pros.map(p => `<li class="pro">${p}</li>`).join('')}</ul>
+    </div>
+    <div class="modal-section">
+      <h4>Cons</h4>
+      <ul>${s.cons.map(c => `<li class="con">${c}</li>`).join('')}</ul>
+    </div>
+    <div class="modal-neighborhood">
+      <h4>Recommended Neighborhood: ${s.neighborhood}</h4>
+      <p>${s.neighborhoodNote}</p>
+    </div>
+    <a class="modal-link" href="${s.url}" target="_blank" rel="noopener">Visit school website &rarr;</a>
+  `;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function toggleCompare(name) {
+  if (compareSet.has(name)) compareSet.delete(name);
+  else if (compareSet.size < 5) compareSet.add(name);
+  updateCompareBar();
+  renderCards();
+  if (currentView === 'compare') renderCompare();
+}
+
+function updateCompareBar() {
+  const bar = document.getElementById('compare-bar');
+  const chips = document.getElementById('compare-chips');
+  if (compareSet.size === 0) {
+    bar.classList.remove('visible');
+    return;
+  }
+  bar.classList.add('visible');
+  chips.innerHTML = [...compareSet].map(name => `
+    <span class="compare-chip">${name} <button onclick="toggleCompare('${name}')">&times;</button></span>
+  `).join('');
+}
+
+function showCompare() {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === 'compare'));
+  document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-compare').classList.add('active');
+  currentView = 'compare';
+  renderCompare();
+}
+
+function resetFilters() {
+  document.getElementById('f-distance').value = '99';
+  document.getElementById('f-tuition').value = '999999';
+  document.getElementById('f-spanish').value = 'any';
+  document.getElementById('f-stem').value = '0';
+  document.getElementById('f-grades').value = 'any';
+  document.getElementById('f-type').value = 'any';
+  document.getElementById('f-sort').value = 'rank';
+  renderAll();
+}
+
+function renderAll() {
+  renderCards();
+  renderTable();
+  if (currentView === 'compare') renderCompare();
+}
+
+// Event listeners
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const view = tab.dataset.view;
+    currentView = view;
+    document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + view).classList.add('active');
+    if (view === 'compare') renderCompare();
+  });
+});
+
+document.querySelectorAll('.filters select').forEach(sel => {
+  sel.addEventListener('change', renderAll);
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Initial render
+renderAll();
+</script>
+</body>
+</html>
