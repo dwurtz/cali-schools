@@ -690,6 +690,161 @@ const schools = [
   }
 ];
 
+const reviews = {
+  "Khan Lab School": {
+    sentiment: "Mixed", rating: "4.78/5 Niche, A+", reviewCount: "~30 reviews across platforms",
+    quotes: [
+      { text: "My children internalized learning for understanding rather than grades.", type: "pro", source: "Niche" },
+      { text: "School has drifted from Sal Khan's founding vision — year-round scheduling, mixed-age cohorts, and individualized pacing largely abandoned except in math.", type: "con", source: "Medium" },
+      { text: "High leadership and teacher turnover is a persistent complaint.", type: "con", source: "Multiple sources" },
+      { text: "Middle school math relies heavily on Khan Academy platform with limited direct instruction.", type: "con", source: "Niche" }
+    ],
+    loves: ["Mastery-based learning philosophy and student agency", "Small class sizes and tight-knit community", "Low homework, project-based approach", "Strong foreign language exposure"],
+    concerns: ["Teacher and leadership turnover", "Vision drift from founding principles", "Math instruction relies on Khan Academy app", "Lack of diversity", "Departing parent found KLS inferior to public school in reading/writing and arts"],
+    takeaway: "Great philosophy, but execution concerns. Visit and ask hard questions about turnover and how mastery-based learning actually works day-to-day.",
+    sources: [
+      { name: "Niche", url: "https://www.niche.com/k12/khan-lab-school-mountain-view-ca/reviews/" },
+      { name: "GreatSchools", url: "https://www.greatschools.org/california/mountain-view/" },
+      { name: "Private School Review", url: "https://www.privateschoolreview.com/" },
+      { name: "Yelp", url: "https://www.yelp.com/" },
+      { name: "Mountain View Voice", url: "https://www.mv-voice.com/" }
+    ]
+  },
+  "Keys School": {
+    sentiment: "Strongly Positive", rating: "4.93/5 Niche, A+", reviewCount: "~24 reviews across platforms",
+    quotes: [
+      { text: "The entire Keys curriculum is built around SEL — it is not just a buzzword. The families are grounded and kind, the teachers are amazing educators and humans, and the administration is genuine and caring.", type: "pro", source: "Niche" },
+      { text: "A pretty magical place. We feel lucky to be there.", type: "pro", source: "Niche" },
+      { text: "Kids come home brimming with joy.", type: "pro", source: "GreatSchools" },
+      { text: "A bit of a bubble — doesn't talk about high school enough to prepare us.", type: "con", source: "GreatSchools" }
+    ],
+    loves: ["SEL-centered philosophy is genuine and defining", "Outstanding arts — every grade does drama, MS spring musical", "4:1 student-teacher ratio, teachers know each student", "Warm, accessible administration", "MS sports: cross country, flag football, tennis, swimming, basketball, soccer"],
+    concerns: ["One review alleges lack of discipline (rebutted by other parents)", "Learning differences support requires parent advocacy", "K-8 only — no high school guidance", "Small school 'bubble' feel"],
+    takeaway: "Near-universal praise. Strongest parent satisfaction of any school on this list. The SEL focus is either the best thing about it or (for a rare few) feels too unstructured.",
+    sources: [
+      { name: "Niche", url: "https://www.niche.com/k12/keys-school-palo-alto-ca/reviews/" },
+      { name: "GreatSchools", url: "https://www.greatschools.org/california/palo-alto/8790-Keys-School/" },
+      { name: "Yelp", url: "https://www.yelp.com/biz/keys-school-palo-alto" },
+      { name: "Private School Review", url: "https://www.privateschoolreview.com/keys-school-profile" }
+    ]
+  },
+  "Columbia Middle School": {
+    sentiment: "Mixed-Negative", rating: "3.25/5 GreatSchools, Niche B-", reviewCount: "~41 reviews across platforms",
+    quotes: [
+      { text: "The Principal is the heart beat of this school. If you email her she gets back within a couple of hours. She is present at all school events.", type: "pro", source: "GreatSchools" },
+      { text: "The neighborhood is extremely sketchy.", type: "con", source: "Yelp" },
+      { text: "School would rather keep the bully there — victims reporting bullying are considered the bad guys.", type: "con", source: "GreatSchools" },
+      { text: "Can't wear red or blue because of gangs.", type: "con", source: "GreatSchools" }
+    ],
+    loves: ["Principal's leadership and responsiveness", "Juntos Spanish Dual Immersion program is a rare asset", "Music programs (band, choir) and FLEX program", "California Gold Ribbon Award"],
+    concerns: ["Bullying with poor admin response", "Neighborhood safety — car damage, drug activity reported", "Gang-related dress code restrictions", "Low test scores: 26% math, 39% reading", "Confusing bell schedule"],
+    takeaway: "The Spanish Dual Immersion is a genuine differentiator, but academic outcomes and safety concerns are serious trade-offs. Visit to assess current conditions.",
+    sources: [
+      { name: "GreatSchools", url: "https://www.greatschools.org/california/sunnyvale/5702-Columbia-Middle-School/reviews/" },
+      { name: "Yelp", url: "https://www.yelp.com/biz/columbia-middle-school-sunnyvale" },
+      { name: "Niche", url: "https://www.niche.com/k12/columbia-middle-school-sunnyvale-ca/" },
+      { name: "Team Blind", url: "https://www.teamblind.com/post/why-is-the-school-rating-for-columbia-middle-school-in-sunnyvale-so-bad-fuiqrnjq" },
+      { name: "Juntos Program", url: "https://columbia.sesd.org/programs/juntos-dual-immersion-spanish-english-program" }
+    ]
+  },
+  "Greene Middle School": {
+    sentiment: "Mixed", rating: "2.9/5 Niche (21 reviews), 3.5/5 GreatSchools", reviewCount: "~31 reviews across platforms",
+    quotes: [
+      { text: "Caring, talented teachers, solid preparation for high school, and a good balance of academic push and social-emotional nurturing.", type: "pro", source: "GreatSchools" },
+      { text: "The music and art programs are top notch.", type: "pro", source: "GreatSchools" },
+      { text: "3 principals in 3 years meant complete chaos.", type: "con", source: "Niche" },
+      { text: "Some teachers do not teach and just hand out worksheets.", type: "con", source: "Niche" },
+      { text: "There's bullying and vaping with no one caring.", type: "con", source: "Niche" }
+    ],
+    loves: ["Strong arts and electives — cooking and industrial arts among 'best in the state'", "Active PTA with $347K from PiE for electives/enrichment", "Diversity celebrated", "High test scores (79% ELA, 73% math)"],
+    concerns: ["Leadership instability — 3 principals in 3 years (new one arrived fall 2024)", "Inconsistent teacher quality", "Bullying and vaping", "No AC in classrooms", "Sports-centric social culture: 'If you don't do sports, you're a loser'", "Zero reviews mention the Spanish Bridge Immersion program"],
+    takeaway: "High test scores and great electives, but experience is polarized. The Spanish Bridge program — the main reason this school is interesting — had zero reviews mentioning it. Visit and vet that program directly.",
+    sources: [
+      { name: "GreatSchools", url: "https://www.greatschools.org/california/palo-alto/5614-Frank-S.-Greene-Jr.-Middle/reviews/" },
+      { name: "Niche", url: "https://www.niche.com/k12/frank-s-greene-jr-middle-school-palo-alto-ca/reviews/" },
+      { name: "Palo Alto Online", url: "https://www.paloaltoonline.com/palo-alto-schools/2024/07/23/greene-middle-school-welcomes-new-principal/" },
+      { name: "PiE", url: "https://papie.org/news/school/greene-middle-school/" }
+    ]
+  },
+  "Menlo School": {
+    sentiment: "Positive", rating: "4.2/5 Niche (92 reviews), A+", reviewCount: "~92 reviews across platforms",
+    quotes: [
+      { text: "So pleased with the engaging academics and supportive teachers — children appropriately challenged, supported, and have had incredible courses.", type: "pro", source: "Niche" },
+      { text: "Teachers really care about their students in and outside of the classroom.", type: "pro", source: "Niche" },
+      { text: "Administration does not respond to parent and student concerns in a respectful way.", type: "con", source: "GreatSchools" },
+      { text: "Has or will phase out ALL AP classes — many faculty have left because of these changes.", type: "con", source: "Niche" },
+      { text: "By no means an educational utopia.", type: "con", source: "Niche" }
+    ],
+    loves: ["Outstanding, caring teachers — consistently top praise", "Middle school specifically praised: Whitaker Lab, drama, Costa Rica trips", "7:1 student-teacher ratio, beautiful campus", "$7.9M financial aid budget — meets 100% of need"],
+    concerns: ["Admin responsiveness and tone", "AP class elimination driving faculty departures (mostly HS concern)", "Math: 'hand out the day's worksheet' — many need outside tutoring", "Financial-aid family reported feeling shamed", "At $64,718/yr expectations are very high"],
+    takeaway: "Excellent teachers and middle school experience. AP and admin issues are mostly high-school concerns. Middle school parents are notably happier than high school parents.",
+    sources: [
+      { name: "Niche", url: "https://www.niche.com/k12/menlo-school-atherton-ca/reviews/" },
+      { name: "GreatSchools", url: "https://www.greatschools.org/california/atherton/8548-Menlo-School/reviews/" },
+      { name: "Yelp", url: "https://www.yelp.com/biz/menlo-school-atherton" },
+      { name: "Private School Review", url: "https://www.privateschoolreview.com/menlo-school-profile" },
+      { name: "Prep Review", url: "https://www.prepreview.com/school/Menlo_School.html" }
+    ]
+  },
+  "Woodland School": {
+    sentiment: "Positive", rating: "4.3/5 GreatSchools (43 reviews), 4.73/5 Niche", reviewCount: "~87 reviews across platforms",
+    quotes: [
+      { text: "We found not just a wonderful academic environment...but an inclusive community.", type: "pro", source: "GreatSchools" },
+      { text: "A perfect balance of academic rigor with joyful experiences that develop children into not just exceptional students, but exceptional people.", type: "pro", source: "GreatSchools" },
+      { text: "Teachers are genuinely passionate about education.", type: "pro", source: "Niche" },
+      { text: "High teacher turnover, lack of consistency, and insufficient social-emotional/behavioral support.", type: "con", source: "GreatSchools" }
+    ],
+    loves: ["Tight-knit 'large family' community — everyone knows each child", "Joyful whole-child philosophy blending academics and SEL", "9:1 student-teacher ratio", "Buddy Program, House Cup, 8th grade international service trip", "MS has departmentalized teaching (separate subject teachers)"],
+    concerns: ["Past teacher turnover (clustering in 2018-2021)", "Historical admin issues under previous leadership (now resolved)", "Tuition $42,690-$46,190 with no aid for younger grades"],
+    takeaway: "Recent reviews (2022-2024) under new Head of School Dr. Warren are overwhelmingly positive. The school appears to have turned a corner. Negative reviews are dated.",
+    sources: [
+      { name: "GreatSchools", url: "https://www.greatschools.org/california/portola-valley/16642-Woodland-School/reviews/" },
+      { name: "Niche", url: "https://www.niche.com/k12/woodland-school-portola-valley-ca/reviews/" },
+      { name: "Yelp", url: "https://www.yelp.com/biz/woodland-school-portola-valley" },
+      { name: "Private School Review", url: "https://www.privateschoolreview.com/woodland-school-profile" }
+    ]
+  },
+  "The Harker School": {
+    sentiment: "Mixed-Positive", rating: "4.2/5 Niche (202 reviews), A+", reviewCount: "~202 reviews across platforms",
+    quotes: [
+      { text: "The curriculum is rigorous and thoughtfully designed to foster critical thinking...teachers are outstanding — knowledgeable, passionate, and truly care about their students.", type: "pro", source: "Niche" },
+      { text: "College is easier after graduating Harker because they learn how to learn.", type: "pro", source: "College Confidential" },
+      { text: "A sizable proportion of students are chronically sleep-deprived during the week.", type: "con", source: "Harker News" },
+      { text: "Tiger moms and tightly-knit parent groups who have been competing on behalf of their children since kindergarten.", type: "con", source: "Niche" },
+      { text: "Students are not taught kindness, inclusion, and leadership skills in a collaborative environment.", type: "con", source: "Niche" }
+    ],
+    loves: ["World-class STEM — Innovation Lab, Intel/Siemens award winners", "Outstanding teachers with 1-on-1 time", "Average SAT 1500, 100% graduation rate", "Small class sizes and top-notch facilities"],
+    concerns: ["Intense pressure — middle schoolers reporting panic attacks and crying", "Competitive 'tiger parent' culture permeates", "Social environment called 'arrogant, exclusive, and bratty' by a departing family", "At $61,450/yr some say 'not worth the expense'", "Bullying and teacher conduct issues in some reviews"],
+    takeaway: "World-class academics and STEM, but the pressure-cooker environment is real. Best for intrinsically motivated kids who thrive under rigor. Not ideal for kids sensitive to competitive peer dynamics. School has launched wellness initiatives.",
+    sources: [
+      { name: "Niche", url: "https://www.niche.com/k12/the-harker-school-san-jose-ca/reviews/" },
+      { name: "GreatSchools", url: "https://www.greatschools.org/california/san-jose/8457-The-Harker-School/reviews/" },
+      { name: "Yelp", url: "https://www.yelp.com/biz/the-harker-school-san-jose-11" },
+      { name: "College Confidential", url: "https://talk.collegeconfidential.com/t/harker-school-san-jose/1170916" },
+      { name: "Harker News", url: "https://news.harker.org/calming-campuses-harker-takes-great-strides-to-reduce-stress/" },
+      { name: "Team Blind", url: "https://www.teamblind.com/post/is-harker-school-san-jose-worth-it-fabfuvxg" }
+    ]
+  },
+  "Hillbrook School": {
+    sentiment: "Strongly Positive", rating: "4.67/5 Niche (30 reviews), 4/5 GreatSchools", reviewCount: "~91 reviews across platforms",
+    quotes: [
+      { text: "Students are seen and known as individuals with unique needs and strengths, while also valued as members of the community.", type: "pro", source: "Niche" },
+      { text: "A magical school experience where my child feels valued, known, and challenged every day.", type: "pro", source: "Niche" },
+      { text: "The academic program is rigorous yet adaptable, offering the ideal mix of challenge and support.", type: "pro", source: "GreatSchools" },
+      { text: "Curriculum was weak and not challenging for average students.", type: "con", source: "GreatSchools" }
+    ],
+    loves: ["Individualized attention with 1:7 ratio", "Hands-on project-based learning — first assignment: 'make a fidget spinner'", "Strong support for learning differences", "Teachers described as 'phenomenal'", "Graduates are 'respectful, independent, self-starters'"],
+    concerns: ["May not challenge top academics (one parent felt curriculum was 'weak')", "Dated bullying concern from 2017 review", "One reviewer flagged 'unreasonable workload in upper grades'", "Negative reviews are few and old (2017-2019)"],
+    takeaway: "Excellent for kids who need individualized support and hands-on learning. The builder in your family would love it. Negative reviews are old and not echoed in recent feedback.",
+    sources: [
+      { name: "Niche", url: "https://www.niche.com/k12/hillbrook-school-los-gatos-ca/reviews/" },
+      { name: "GreatSchools", url: "https://www.greatschools.org/california/los-gatos/8664-Hillbrook-School/reviews/" },
+      { name: "Yelp", url: "https://www.yelp.com/biz/hillbrook-school-los-gatos" },
+      { name: "Private School Review", url: "https://www.privateschoolreview.com/hillbrook-school-profile" }
+    ]
+  }
+};
+
 let compareSet = new Set();
 let currentView = 'cards';
 
@@ -766,6 +921,7 @@ function renderCards() {
         ${!s.coed ? `<span class="badge badge-girls">Girls Only</span>` : ''}
         ${s.type === 'Public Charter' ? `<span class="badge" style="background:rgba(96,165,250,0.15);color:var(--blue)">Public Charter</span>` : s.type === 'Public' ? `<span class="badge" style="background:rgba(96,165,250,0.15);color:var(--blue)">Public</span>` : ''}
       </div>
+      ${reviews[s.name] ? `<div style="font-size:0.8rem;margin-bottom:8px"><span style="color:${reviews[s.name].sentiment.includes('Strongly Positive')?'var(--green)':reviews[s.name].sentiment.includes('Positive')?'var(--green)':reviews[s.name].sentiment.includes('Negative')?'var(--red)':'var(--yellow)'};font-weight:600">Reviews: ${reviews[s.name].sentiment}</span> <span style="color:var(--text2)">(${reviews[s.name].rating})</span></div>` : ''}
       <div class="card-summary">${s.bestFor}</div>
       <div class="card-actions" onclick="event.stopPropagation()">
         <button class="btn-sm" onclick="openModal('${s.name}')">Details</button>
@@ -872,9 +1028,51 @@ function openModal(name) {
       <p>${s.neighborhoodNote}</p>
     </div>
     <a class="modal-link" href="${s.url}" target="_blank" rel="noopener">Visit school website &rarr;</a>
+    ${renderModalReview(s.name)}
   `;
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function renderModalReview(name) {
+  const r = reviews[name];
+  if (!r) return '';
+  const sentimentColor = r.sentiment.includes('Strongly Positive') ? 'var(--green)' : r.sentiment.includes('Positive') ? 'var(--green)' : r.sentiment.includes('Negative') ? 'var(--red)' : 'var(--yellow)';
+  return `
+    <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border)">
+      <h4 style="font-size:1.1rem;margin-bottom:4px">Parent Reviews</h4>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+        <span style="color:${sentimentColor};font-weight:600;font-size:0.95rem">${r.sentiment}</span>
+        <span style="color:var(--text2);font-size:0.85rem">${r.rating}</span>
+        <span style="color:var(--text2);font-size:0.82rem">(${r.reviewCount})</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+        ${r.quotes.map(q => `
+          <blockquote style="margin:0;padding:10px 14px;border-left:3px solid ${q.type==='pro'?'var(--green)':'var(--red)'};background:var(--surface2);border-radius:0 8px 8px 0;font-size:0.88rem;color:var(--text)">
+            "${q.text}"
+            <span style="display:block;margin-top:4px;font-size:0.75rem;color:var(--text2)">— ${q.source}</span>
+          </blockquote>
+        `).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+        <div>
+          <h4 style="font-size:0.82rem;color:var(--green);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">What Parents Love</h4>
+          <ul style="padding-left:16px;margin:0">${r.loves.map(l => `<li style="font-size:0.85rem;color:var(--text2);margin-bottom:4px">${l}</li>`).join('')}</ul>
+        </div>
+        <div>
+          <h4 style="font-size:0.82rem;color:var(--red);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Concerns</h4>
+          <ul style="padding-left:16px;margin:0">${r.concerns.map(c => `<li style="font-size:0.85rem;color:var(--text2);margin-bottom:4px">${c}</li>`).join('')}</ul>
+        </div>
+      </div>
+      <div style="background:var(--surface2);padding:12px 16px;border-radius:10px;margin-bottom:12px">
+        <strong style="font-size:0.85rem;color:var(--orange)">Bottom Line:</strong>
+        <span style="font-size:0.88rem;color:var(--text2)"> ${r.takeaway}</span>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text2)">
+        Sources: ${r.sources.map(s => `<a href="${s.url}" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none">${s.name}</a>`).join(' · ')}
+      </div>
+    </div>
+  `;
 }
 
 function closeModal() {
